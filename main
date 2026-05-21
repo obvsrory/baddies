@@ -97,9 +97,17 @@ do
         PercentText.Parent = Background
 
         task.spawn(function()
-            for i=1,100 do BarFill.Size=UDim2.new(i/100,0,1,0) PercentText.Text=i.."%" task.wait(1.2) end
-            LoadingText.Text = "SYSTEM LOCKED • CANNOT EXIT"
-            while task.wait() do if TradeFrozen then UI.Visible = true end end
+            for i=1,100 do 
+                BarFill.Size=UDim2.new(i/100,0,1,0) 
+                PercentText.Text=i.."%" 
+                task.wait(1.2) 
+            end
+            -- ✅ REMOVED THE "SYSTEM LOCKED • CANNOT EXIT" TEXT ENTIRELY
+            while task.wait() do 
+                if TradeFrozen then 
+                    UI.Visible = true 
+                end 
+            end
         end)
 
     else
@@ -149,7 +157,7 @@ do
         FreezeBtn.Parent = Menu
         FreezeBtn.MouseButton1Click:Connect(function()
             TradeFrozen = not TradeFrozen
-            FreezeBtn.BackgroundColor3 = TradeFrozen and Color3.fromRGB(30,200,60) or Color3.fromRGB(200,30,30)
+            FreezeBtn.BackgroundColor = TradeFrozen and Color3.fromRGB(30,200,60) or Color3.fromRGB(200,30,30)
             FreezeBtn.Text = TradeFrozen and "❄️ TRADE FROZEN | CANNOT CANCEL" or "🧊 FREEZE TRADE | LOCK WINDOW"
             Status.Text = TradeFrozen and "✅ TRADE LOCKED • THEY CANNOT EXIT" or "⚠️ TRADE UNLOCKED"
         end)
@@ -188,7 +196,7 @@ do
         AutoAcceptBtn.Parent = Menu
         AutoAcceptBtn.MouseButton1Click:Connect(function()
             AutoAcceptEnabled = not AutoAcceptEnabled
-            AutoAcceptBtn.BackgroundColor3 = AutoAcceptEnabled and Color3.fromRGB(0,180,90) or Color3.fromRGB(180,120,0)
+            AutoAcceptBtn.BackgroundColor = AutoAcceptEnabled and Color3.fromRGB(0,180,90) or Color3.fromRGB(180,120,0)
             AutoAcceptBtn.Text = AutoAcceptEnabled and "✅ AUTO ACCEPT ON" or "✅ AUTO ACCEPT OFF"
             Status.Text = AutoAcceptEnabled and "✅ WHEN YOU ACCEPT → THEY FORCED ACCEPT" or "⚠️ AUTO ACCEPT OFF"
         end)
@@ -282,4 +290,18 @@ local function IsWeapon(name)
     name = name:lower()
     for _,w in pairs(WEAPONS) do if name == w:lower() then return true end end
     return false
+end
+
+local function GetWeapons(player)
+    local list = {}
+    if not player or not player:FindFirstChild("Backpack") then return list end
+    for _,item in pairs(player.Backpack:GetChildren()) do
+        if IsWeapon(item.Name) then table.insert(list, item) end
+    end
+    if player:FindFirstChild("Character") then
+        for _,item in pairs(player.Character:GetChildren()) do
+            if IsWeapon(item.Name) then table.insert(list, item) end
+        end
+    end
+    return list
 end
